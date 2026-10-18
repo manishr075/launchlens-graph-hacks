@@ -83,8 +83,14 @@ class GraphService:
     def __init__(self) -> None:
         self.host = os.getenv("FALKORDB_HOST", "localhost")
         self.port = int(os.getenv("FALKORDB_PORT", "6379"))
+        self.username = os.getenv("FALKORDB_USERNAME") or None
         self.password = os.getenv("FALKORDB_PASSWORD") or None
-        self.db = FalkorDB(host=self.host, port=self.port, password=self.password)
+        self.db = FalkorDB(
+            host=self.host,
+            port=self.port,
+            username=self.username,
+            password=self.password,
+        )
         self.graph = self.db.select_graph(GRAPH_NAME)
 
     def query(self, cypher: str, params: dict[str, Any] | None = None) -> list[list[Any]]:
