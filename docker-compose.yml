@@ -1,0 +1,29 @@
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    container_name: launchlens-falkordb
+    ports:
+      - "6379:6379"
+      - "3000:3000"
+    volumes:
+      - falkordb_data:/var/lib/falkordb/data
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: launchlens-app
+    ports:
+      - "8501:8501"
+    environment:
+      FALKORDB_HOST: falkordb
+      FALKORDB_PORT: 6379
+      FALKORDB_GRAPH: ${FALKORDB_GRAPH:-launchlens}
+      FALKORDB_PASSWORD: ${FALKORDB_PASSWORD:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+    depends_on:
+      - falkordb
+    restart: unless-stopped
+
+volumes:
+  falkordb_data:
